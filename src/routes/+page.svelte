@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { ChessPiece } from './types';
+	//import { ChessPiece } from './types';
 	import { GameState } from './ChessEngine';
 
 	let userFEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b';
 	let mouseX: number;
 	let mouseY: number;
-    let selectedPiece: ChessPiece | null;
+   // let selectedPiece: ChessPiece | null;
 	let game = new GameState(userFEN);
 
 	$: game = new GameState(userFEN);
@@ -15,9 +15,9 @@
 		mouseY = event.clientY;
 	}
 
-    function selectedPiece(piece: ChessPiece) {
-        selectedPiece = piece;
-    }
+    // function selectedPiece(piece: ChessPiece) {
+        // selectedPiece = piece;
+    // }
 </script>
 
 <div
@@ -37,9 +37,15 @@
 						class={`flex h-full items-center justify-center ${(rowIndex + colIndex) % 2 === 0 ? 'bg-[#D9B48A]' : 'bg-[#7D5A3A]'}`}
 					>
 						{#if cell?.type}
-							<span on:click|stopPropagation={() => selectedPiece(cell.type)}>
-								<img src={`/src/pieces/${cell.image}.svg`} alt="" class="w-full" />
-							</span>
+							<div style="background-image: url('/pieces/{cell.image}.svg');
+								background-size: cover;
+								background-repeat: no-repeat;
+								background-position: center;
+								width: 100%;
+								height: 100%;"
+								class="cursor-grab active:cursor-grabbing"
+								>
+								</div>
 						{/if}
 					</div>
 				{/each}
