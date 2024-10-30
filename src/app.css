@@ -1,0 +1,9 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+body {
+    height: 100vh;
+    margin: 0;
+    background: linear-gradient(to bottom, black, #1a2a3a);
+}
