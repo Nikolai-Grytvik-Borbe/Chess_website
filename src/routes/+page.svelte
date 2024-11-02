@@ -5,7 +5,7 @@
 	let userFEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b';
 	let mouseX: number;
 	let mouseY: number;
-   // let selectedPiece: ChessPiece | null;
+	// let selectedPiece: ChessPiece | null;
 	let game = new GameState(userFEN);
 
 	$: game = new GameState(userFEN);
@@ -15,16 +15,47 @@
 		mouseY = event.clientY;
 	}
 
-    // function selectedPiece(piece: ChessPiece) {
-        // selectedPiece = piece;
-    // }
+  let active_piece: HTMLElement | null = null;
+
+  function grabPiece(event: MouseEvent) {
+    const element = event.target as HTMLElement;
+    if (element.classList.contains("chess-piece")) {
+      const x = event.clientX - 50;
+      const y = event.clientY - 50;
+      element.style.position = "absolute";
+      element.style.left = `${x}px`;
+      element.style.top = `${y}px`;
+
+      active_piece = element;
+    }
+  }
+
+  function movePiece(event: MouseEvent) {
+    if (active_piece) {
+      const x = event.clientX - 50;
+      const y = event.clientY - 50;
+      active_piece.style.position = "absolute";
+      active_piece.style.left = `${x}px`;
+      active_piece.style.top = `${y}px`;
+    }
+  }
+
+  function dropPiece(event: MouseEvent) {
+    if (active_piece) {
+      active_piece = null;
+    }
+  }
+
+	// function selectedPiece(piece: ChessPiece) {
+	// selectedPiece = piece;
+	// }
 </script>
 
 <div
 	on:mousemove={handleMouseMovement}
 	role="button"
 	tabindex="0"
-	class="flex h-screen items-center justify-center"
+	class="flex justify-center items-center h-screen"
 >
 	<div class="container">
 		<div class="text-white">
@@ -33,19 +64,17 @@
 		<div class="chess_board grid grid-cols-8 grid-rows-8">
 			{#each game.board as row, rowIndex}
 				{#each row as cell, colIndex}
-					<div
-						class={`flex h-full items-center justify-center ${(rowIndex + colIndex) % 2 === 0 ? 'bg-[#D9B48A]' : 'bg-[#7D5A3A]'}`}
+					<div on:mouseup={dropPiece} on:mousemove={movePiece} on:mousedown={grabPiece} role="button" tabindex="0"
+						class={`cell flex h-full items-center justify-center cursor-default ${(rowIndex + colIndex) % 2 === 0 ? 'bg-[#D9B48A]' : 'bg-[#7D5A3A]'}`}
 					>
 						{#if cell?.type}
-							<div style="background-image: url('/pieces/{cell.image}.svg');
+							<div
+								style="background-image: url('/pieces/{cell.image}.svg');
 								background-size: cover;
 								background-repeat: no-repeat;
-								background-position: center;
-								width: 100%;
-								height: 100%;"
-								class="cursor-grab active:cursor-grabbing"
-								>
-								</div>
+								background-position: center;"
+								class="chess-piece cursor-grab active:cursor-grabbing"
+							></div>
 						{/if}
 					</div>
 				{/each}
@@ -64,14 +93,16 @@
 
 <style>
 	.container {
-		width: 74vh; /* 75% of viewport width */
-		position: relative;
-		padding: 2rem;
+    height: 80vh;
+    width: 80vh;
 	}
+  
+  .chess-piece {
+    width: 100px;
+    height: 100px;
+  }
 
 	.chess_board {
-		background-color: #3498db; /* Background color of the chessboard */
-		width: 100%;
-		aspect-ratio: 1; /* Keep the aspect ratio square */
+    aspect-ratio: 1; /* Keep the aspect ratio square */
 	}
 </style>
