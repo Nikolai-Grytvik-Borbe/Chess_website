@@ -43,7 +43,7 @@ export class GameState {
 		let rank = 0;
 		for (const char of fenBoard) {
 			if (char === '/') {
-				file = 0;
+				file = 0;  
 				rank++;
 			} else {
 				if (!isNaN(Number(char))) {
@@ -72,4 +72,19 @@ export class GameState {
 		}
 		return [board, whiteToMove];
 	}
+}
+
+
+export class Square extends GameState {
+	row: number;
+	col: number;
+	piece: ChessPiece | null;
+
+	constructor(row: number, col: number, piece: ChessPiece | null) {
+		super();
+		this.row = row;
+		this.col = col;
+		this.piece = piece;
+	}
+
 }
