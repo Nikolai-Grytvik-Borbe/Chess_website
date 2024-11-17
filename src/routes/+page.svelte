@@ -3,7 +3,7 @@
 	//import { ChessPiece } from './types';
 	import { GameState } from './ChessEngine';
 
-	let userFEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR b';
+	let userFEN = 'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w';
 	let mouseX: number;
 	let mouseY: number;
 	// let selectedPiece: ChessPiece | null;
@@ -19,7 +19,7 @@
 	let current_square = [0, 0];
 
 	function grabPiece(event: MouseEvent, row: number, col: number) {
-    Piece = game.board[row][col];
+		Piece = game.board[row][col];
 		const element = event.target as HTMLElement;
 		if (element.classList.contains('chess-piece')) {
 			const x = event.clientX - 25;
@@ -42,18 +42,26 @@
 		}
 	}
 
-  // event -> get x and y coordinates for 0,0, and 7,7 
-  // get event.clientX and clientY
-  // calc row, and col
+	// event -> get x and y coordinates for 0,0, and 7,7
+	// get event.clientX and clientY
+	// calc row, and col
 	function dropPiece(event: MouseEvent) {
 		if (active_piece) {
-      console.log(current_square);
-			game.board[current_square[0]][current_square[1]] = Piece;
-			Piece = null;
+			let cur_mouse_pos_x = event.clientX;
+			let cur_mouse_pos_y = event.clientY;
+			let top_corner = document.getElementById('0-0')?.getBoundingClientRect();
+			let bottom_corner = document.getElementById('7-7')?.getBoundingClientRect();
+			let size_board = top_corner?.right! - top_corner?.left!;
+			let size_square = size_board / 8;
+			let cursor_pos_board_x = cur_mouse_pos_x - top_corner?.left!;
+			let cursor_pos_board_y = cur_mouse_pos_y - top_corner?.top!;
+			let col = Math.floor(cursor_pos_board_x / size_square);
+			let row = Math.floor(cursor_pos_board_y / size_square);
+			console.log(col, row)
+
 			active_piece = null;
 		}
 	}
-
 </script>
 
 <div
@@ -75,6 +83,7 @@
 						on:mouseup={(event) => dropPiece(event)}
 						role="button"
 						tabindex="0"
+						id={`${rowIndex}-${colIndex}`}
 						class={`cell flex h-full cursor-default items-center justify-center ${(rowIndex + colIndex) % 2 === 0 ? 'bg-[#D9B48A]' : 'bg-[#7D5A3A]'}`}
 					>
 						{#if cell?.type}
@@ -103,13 +112,13 @@
 
 <style>
 	.container {
-		height: 80vh;
-		width: 80vh;
+		height: 60vh;
+		width: 60vh;
 	}
 
 	.chess-piece {
-		width: 50px;
-		height: 50px;
+		width: 90px;
+		height: 90px;
 	}
 
 	.chess_board {
